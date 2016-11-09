@@ -4,7 +4,7 @@ import networkx as nx
 import re
 import csv
 
-def read_network_data(datafilename, isDirected):
+def read_demo_data(datafilename, isDirected):
     with open(datafilename, 'r') as fin:
         creader = csv.reader(fin, delimiter=',')
         data = [row for row in creader]
