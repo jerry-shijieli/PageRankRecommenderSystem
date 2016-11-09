@@ -9,7 +9,7 @@ import sys
 import csv
 import operator
 import numpy as np
-from dataloader import read_network_data
+from dataloader import read_network_data, read_demo_data
 
 class PageRank:
     def __init__(self, graph, directed):
@@ -68,7 +68,7 @@ def main():
         sys.exit(1)
     data_filename = sys.argv[1]
     isDirected = True if sys.argv[2]=="directed" else False
-    graph = read_demo_data(data_filename, isDirected)
+    graph = read_network_data(data_filename, isDirected)
     pagerank = PageRank(graph, isDirected)
     pagerank.compute_ranks(0.85)
     ranks_of_page = pagerank.get_ranks()

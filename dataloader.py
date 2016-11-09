@@ -4,10 +4,31 @@ import networkx as nx
 import re
 import csv
 
+def read_network_data(datafilename, isDirected):
+    with open(datafilename, 'r') as fin:
+        print "Reading data and building graph ... "
+        data = [x.strip().split('\t') for x in fin.readlines()]
+        data = data[1:] # remove the header
+    fin.close()
+    if isDirected:
+        dg = nx.DiGraph()
+        for entry in data:
+            dg.add_edge(entry[0], entry[1])
+        return dg
+    else:
+        udg = nx.Graph()
+        for entry in data:
+            udg.add_edge(entry[0], entry[1])
+        rank = 1/float(udg.order())
+        nx.set_node_attributes(udg, 'rank', rank)
+        return udg
+
+
 def read_demo_data(datafilename, isDirected):
     with open(datafilename, 'r') as fin:
         creader = csv.reader(fin, delimiter=',')
         data = [row for row in creader]
+    fin.close()
     print "Reading data and building graph ... "
     if isDirected:
         return build_directed_graph(data)
@@ -35,7 +56,7 @@ def build_undirected_graph(data):
     edges = [(entry[0], entry[2]) for entry in data]
     nodes = [entry[0] for entry in data]
     nodes.extend([entry[2] for entry in data])
-    rank = 1/float(len(nodes))
+    rank = 1/float(len(set(nodes)))
     udg.add_nodes_from(nodes, rank=rank)
     udg.add_edges_from(edges, weight=1)
     return udg
