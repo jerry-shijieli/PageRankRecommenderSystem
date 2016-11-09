@@ -8,6 +8,7 @@ import sys
 import operator
 
 
+
 def main():
     if len(sys.argv)==1:
         print("Usage: python PageRank.py <data_filename> <directed OR undirected>")
