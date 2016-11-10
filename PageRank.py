@@ -9,6 +9,7 @@ import sys
 import csv
 import operator
 import numpy as np
+from networkx.exception import NetworkXError
 from dataloader import read_network_data, read_demo_data
 
 class PageRank:
@@ -19,13 +20,20 @@ class PageRank:
         self.directed = directed
         self.ranks = dict() # page ranks
 
-    def compute_ranks(self, damp=0.85, max_iter=100, tol=1e-6):
+    def compute_ranks(self, damp=0.85, max_iter=100, tol=1e-6, personalization=None):
         # initialize rankings
-        for node, node_attr in self.graph.nodes(data=True):
-            if self.directed:
-                self.ranks[node] = 1/float(self.V)
-            else:
-                self.ranks[node] = node_attr.get("rank")
+        if personalization is None:
+            for node, node_attr in self.graph.nodes(data=True):
+                if self.directed:
+                    self.ranks[node] = 1/float(self.V)
+                else:
+                    self.ranks[node] = node_attr.get("rank")
+        else:
+            missing = set(self.graph) - set(personalization)
+            if missing:
+                raise NetworkXError("Missing values for %s nodes" % missing)
+            val_sum = float(sum(personalization.values()))
+            self.ranks = dict((k, v/val_sum) for k, v in personalization.items())
         # update pagerank values over iterations
         count_iter = 0
         error = np.inf
